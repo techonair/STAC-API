@@ -1,0 +1,30 @@
+[project]
+name = "stac_api"
+version = "0.1.0"
+description = "A STAC-compliant API service for searching satellite imagery."
+authors = [{ name = "bpratap55j@gmail.com"}]
+packages = [
+    { include = "stac_api" },
+    { include = "db" },
+    { include = "stac_json" },
+    { include = "tests"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.poetry.dependencies]
+fastapi = "*"
+uvicorn = "*"
+sqlalchemy = "*"
+psycopg2-binary = "*"
+pydantic = "*"
+geojson = "*"
+pystac-client = "*"
+pydantic-settings = "^2.10.1"
+
+[tool.poetry.scripts]
+start-api = "app:run"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

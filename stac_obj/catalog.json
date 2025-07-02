@@ -1,0 +1,43 @@
+{
+  "stac_version": "1.0.0",
+  "id": "root",
+  "description": "Root catalog for satellite imagery STAC implementation.",
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8000/stac/catalog.json"
+    },
+    {
+      "rel": "child",
+      "href": "http://localhost:8000/stac/collections/sentinel-2-l2a",
+      "type": "application/json",
+      "title": "Sentinel-2 L2A Collection"
+    }
+  ],
+  "collections": [
+    {
+      "id": "sentinel-2-l2a",
+      "title": "Sentinel-2 Level 2A",
+      "description": "Sentinel-2 Level 2A satellite imagery collection.",
+      "extent": {
+        "spatial": {
+          "bbox": [
+            [ -180.0, -90.0, 180.0, 90.0 ]
+          ]
+        },
+        "temporal": {
+          "interval": [
+            [ "2023-01-01T00:00:00Z", "2023-12-31T23:59:59Z" ]
+          ]
+        }
+      },
+      "items": [
+        "item1",
+        "item2",
+        "item3",
+        "item4",
+        "item5"
+      ]
+    }
+  ]
+}
