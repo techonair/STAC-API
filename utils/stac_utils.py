@@ -1,25 +1,70 @@
+import json
+from geoalchemy2.shape import to_shape
+from shapely.geometry import mapping
+from fastapi.responses import JSONResponse
+
+def stac_geojson_response(data):
+    # Returns a FastAPI JSONResponse with the correct GeoJSON content type
+    return JSONResponse(content=data, media_type="application/geo+json")
+
 def generate_stac_response(items):
     feature_collection = {
         "type": "FeatureCollection",
-        "features": []
+        "features": [],
+        "bbox": None,  # Will be set below
+        "links": [],
+        "numberMatched": len(items),
+        "numberReturned": len(items)
     }
 
+    all_coords = []
     for item in items:
+        # Convert PostGIS geometry to GeoJSON
+        geometry = None
+        bbox = None
+        if item.bbox is not None:
+            try:
+                shapely_geom = to_shape(item.bbox)
+                geometry = mapping(shapely_geom)
+                bbox = list(shapely_geom.bounds)
+                all_coords.extend(list(shapely_geom.exterior.coords))
+            except Exception:
+                geometry = None
+                bbox = [None, None, None, None]
+        # Parse assets from properties if present
+        assets = {}
+        try:
+            props = json.loads(item.properties) if item.properties else {}
+            assets = props.get('assets', {})
+        except Exception:
+            assets = {}
         feature = {
             "type": "Feature",
-            "id": item['id'],
+            "id": item.id,  # Required by STAC spec
+            "stac_version": "1.0.0",
             "properties": {
-                "datetime": item['datetime'],
-                "collection": item['collection'],
-                "description": item.get('description', ''),
+                "datetime": str(item.datetime),
+                "collection": item.collection,
+                "description": getattr(item, 'description', ''),
+                # Add more STAC properties as needed
             },
-            "geometry": item['geometry'],
-            "links": item.get('links', [])
+            "geometry": geometry if geometry else {},
+            "bbox": bbox if bbox else [None, None, None, None],
+            "links": [],
+            "assets": assets,
+            "stac_extensions": [],
+            "collection": item.collection
         }
         feature_collection['features'].append(feature)
 
-    return feature_collection
+    # Set collection bbox if any features exist
+    if all_coords:
+        lons, lats = zip(*all_coords)
+        feature_collection['bbox'] = [min(lons), min(lats), max(lons), max(lats)]
+    else:
+        feature_collection['bbox'] = [None, None, None, None]
 
+    return feature_collection
 
 def parse_bbox(bbox):
     if len(bbox) != 4:
@@ -30,7 +75,6 @@ def parse_bbox(bbox):
         "max_lon": bbox[2],
         "max_lat": bbox[3]
     }
-
 
 def parse_datetime(datetime_str):
     from dateutil import parser

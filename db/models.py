@@ -4,8 +4,8 @@ from geoalchemy2 import Geometry
 
 Base = declarative_base()
 
-class SatelliteImage(Base):
-    __tablename__ = 'satellite_images'
+class STACItem(Base):
+    __tablename__ = 'stacitem'
 
     id = Column(String, primary_key=True)
     datetime = Column(DateTime, nullable=False)
@@ -14,4 +14,4 @@ class SatelliteImage(Base):
     properties = Column(String)  # JSON or string representation of additional properties
 
     def __repr__(self):
-        return f"<SatelliteImage(id={self.id}, datetime={self.datetime}, collection={self.collection})>"
+        return f"<STACItem(id={self.id}, datetime={self.datetime}, collection={self.collection})>"
