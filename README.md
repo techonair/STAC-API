@@ -48,6 +48,11 @@ Run tests with:
 ```sh
 pytest tests\\test_search.py
 ```
+OR
+Use Jupyter Notebook
+```sh
+demo_stac_client.ipynb
+```
 
 ## Notes
 - See `db/init_stac_db.sql` for sample data and schema.

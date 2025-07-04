@@ -6,6 +6,7 @@ from db.models import STACItem
 from fastapi import Depends, HTTPException
 from geoalchemy2.shape import from_shape
 from shapely.geometry import box
+from utils.stac_utils import stac_geojson_response
 
 def search_items(
     bbox: str = Query(..., description="Comma-separated bbox: minLon,minLat,maxLon,maxLat"),
@@ -24,6 +25,7 @@ def search_items(
         ).all()
         if not items:
             raise HTTPException(status_code=404, detail="No items found")
-        return generate_stac_response(items)
+        
+        return stac_geojson_response(generate_stac_response(items))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
