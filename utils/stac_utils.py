@@ -4,14 +4,13 @@ from shapely.geometry import mapping
 from fastapi.responses import JSONResponse
 
 def stac_geojson_response(data):
-    # Returns a FastAPI JSONResponse with the correct GeoJSON content type
     return JSONResponse(content=data, media_type="application/geo+json")
 
 def generate_stac_response(items):
     feature_collection = {
         "type": "FeatureCollection",
         "features": [],
-        "bbox": None,  # Will be set below
+        "bbox": None,
         "links": [],
         "numberMatched": len(items),
         "numberReturned": len(items)
@@ -19,7 +18,7 @@ def generate_stac_response(items):
 
     all_coords = []
     for item in items:
-        # Convert PostGIS geometry to GeoJSON
+        
         geometry = None
         bbox = None
         if item.bbox is not None:
@@ -31,7 +30,7 @@ def generate_stac_response(items):
             except Exception:
                 geometry = None
                 bbox = [None, None, None, None]
-        # Parse assets from properties if present
+        
         assets = {}
         try:
             props = json.loads(item.properties) if item.properties else {}
@@ -40,13 +39,13 @@ def generate_stac_response(items):
             assets = {}
         feature = {
             "type": "Feature",
-            "id": item.id,  # Required by STAC spec
+            "id": item.id,
             "stac_version": "1.0.0",
             "properties": {
                 "datetime": str(item.datetime),
                 "collection": item.collection,
                 "description": getattr(item, 'description', ''),
-                # Add more STAC properties as needed
+                
             },
             "geometry": geometry if geometry else {},
             "bbox": bbox if bbox else [None, None, None, None],
@@ -57,7 +56,7 @@ def generate_stac_response(items):
         }
         feature_collection['features'].append(feature)
 
-    # Set collection bbox if any features exist
+    
     if all_coords:
         lons, lats = zip(*all_coords)
         feature_collection['bbox'] = [min(lons), min(lats), max(lons), max(lats)]

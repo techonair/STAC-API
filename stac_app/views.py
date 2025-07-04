@@ -15,7 +15,7 @@ def search_items(
     try:
         bbox_list = [float(x) for x in bbox.split(',')]
         datetime_start, datetime_end = datetime.split('/')
-        # Convert bbox_list to a Shapely box and then to WKT for PostGIS
+        
         shapely_box = box(*bbox_list)
         bbox_geom = from_shape(shapely_box, srid=4326)
         items = db.query(STACItem).filter(

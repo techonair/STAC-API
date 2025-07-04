@@ -11,7 +11,7 @@ class STACItem(Base):
     datetime = Column(DateTime, nullable=False)
     bbox = Column(Geometry(geometry_type='POLYGON', srid=4326), nullable=False)
     collection = Column(String, nullable=False)
-    properties = Column(String)  # JSON or string representation of additional properties
+    properties = Column(String)
 
     def __repr__(self):
         return f"<STACItem(id={self.id}, datetime={self.datetime}, collection={self.collection})>"
