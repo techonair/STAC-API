@@ -12,7 +12,7 @@ This project implements a minimal SpatioTemporal Asset Catalog (STAC) API for se
 
 ### 1. Clone the repository
 ```sh
-git clone <your-repo-url>
+git clone https://github.com/techonair/STAC-API.git
 cd STAC-API
 ```
 
@@ -46,7 +46,7 @@ print(r.json())
 ## Testing
 Run tests with:
 ```sh
-pytest
+pytest tests\\test_search.py
 ```
 
 ## Notes
